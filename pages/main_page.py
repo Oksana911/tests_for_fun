@@ -12,6 +12,7 @@ class Locators:
     GO_BUTTON = (By.XPATH, '//*[@id="root"]/div/section/div/div/div/div/div/button[1]')
 
     CREATE_NEW_BUTTON = (By.XPATH, '//*[@id="basic-navbar-nav"]/div/div[1]/div/a[3]')
+    ADD_MONEY_BUTTON = (By.XPATH, '//*[@id="basic-navbar-nav"]/div/div[1]/div/a[4]')
 
 
 class MainPage(BasePage):
@@ -46,3 +47,6 @@ class MainPage(BasePage):
         self.enter_email(email)
         self.enter_password(password)
         self.click_on_the_go_button()
+
+    def click_on_the_add_money_button(self):
+        return self.find_element(Locators.ADD_MONEY_BUTTON, time=100).click()
