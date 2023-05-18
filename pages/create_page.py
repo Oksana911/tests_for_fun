@@ -10,6 +10,7 @@ class Locators:
     MALE_SEX = (By.XPATH, '//*[@id="sex_send"]')
     MONEY = (By.XPATH, '//*[@id="money_send"]')
     PUSH_TO_API_BUTTON = (By.XPATH, '//*[@id="root"]/div/section/div/div/button[1]')
+    NEW_USER_ID = (By.XPATH, '//*[@id="root"]/div/section/div/div/button[3]')
 
 
 class CreatePage(BasePage):
@@ -34,7 +35,7 @@ class CreatePage(BasePage):
         return age
 
     def choose_male_sex(self):
-        return self.find_element(Locators.MALE_SEX, time=100).click()
+        return self.find_element(Locators.MALE_SEX).click()
 
     def enter_money(self, money: int):
         money_field = self.find_element(Locators.MONEY)
@@ -50,4 +51,7 @@ class CreatePage(BasePage):
         self.enter_money(money)
 
     def click_on_the_push_button(self):
-        return self.find_element(Locators.PUSH_TO_API_BUTTON, time=100).click()
+        return self.find_element(Locators.PUSH_TO_API_BUTTON).click()
+
+    def find_new_id(self):
+        return self.find_element(Locators.NEW_USER_ID).text

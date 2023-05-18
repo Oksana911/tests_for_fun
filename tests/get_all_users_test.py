@@ -17,7 +17,7 @@ def test_get_all_users(browser, db_cursor):
     browser.get_screenshot_as_file('result.png')  # TODO
 
     db_cursor.execute("SELECT * FROM person LIMIT 1")
-    first_user_in_db = db_cursor.fetchall()  # [(4, 25, 'Peter', Decimal('26061.00'), 'Form', True, 1)]
+    first_user_in_db = db_cursor.fetchone()  # (4, 25, 'Peter', Decimal('26061.00'), 'Form', True, 1)
     first_user_in_web_str = browser.find_element(By.XPATH,
                                                  '//*[@id="root"]/div/section/div/table/tbody/tr[1]').text  # '4 Peter Form 25 MALE 26061'
 
