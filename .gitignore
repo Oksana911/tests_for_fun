@@ -126,3 +126,7 @@ dmypy.json
 # IDEs
 .vscode/
 *.iml
+
+tests/result.png
+tests/res_create.png
+constants.py
