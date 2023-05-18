@@ -14,4 +14,5 @@ def test_get_all_users(browser):
 
     browser.get_screenshot_as_file('result.png')  # TODO
 
-    text = page.get_text()  # TODO
+    assert browser.current_url == 'http://77.50.236.203:4881/#/read/users'
+    # text = page.get_text()  # TODO assert полученных пользователей в БД
