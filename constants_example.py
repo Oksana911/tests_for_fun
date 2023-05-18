@@ -1,0 +1,6 @@
+EMAIL = '111@111.ru'
+PASSWORD = '1234'
+FIRST_NAME = 'Ivan'
+LAST_NAME = 'Ivanov'
+AGE = 20
+MONEY = 1000
