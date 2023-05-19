@@ -13,20 +13,21 @@ class Locators:
 
     CREATE_NEW_BUTTON = (By.XPATH, '//*[@id="basic-navbar-nav"]/div/div[1]/div/a[3]')
     ADD_MONEY_BUTTON = (By.XPATH, '//*[@id="basic-navbar-nav"]/div/div[1]/div/a[4]')
+    BUY_CAR_BUTTON = (By.XPATH, '//*[@id="basic-navbar-nav"]/div/div[1]/div/a[5]')
 
 
 class MainPage(BasePage):
     def click_on_the_users_button(self):
-        return self.find_element(Locators.USERS_BUTTON, time=100).click()
+        return self.find_element(Locators.USERS_BUTTON).click()
 
     def click_on_the_read_all_button(self):
-        return self.find_element(Locators.READ_ALL_BUTTON, time=100).click()
+        return self.find_element(Locators.READ_ALL_BUTTON).click()
 
     # def get_text(self):
     #     return self.find_element(Locators.READ_ALL_BUTTON, time=100).text
 
     def click_on_the_create_button(self):
-        return self.find_element(Locators.CREATE_NEW_BUTTON, time=100).click()
+        return self.find_element(Locators.CREATE_NEW_BUTTON).click()
 
     def enter_email(self, email: str):
         email_field = self.find_element(Locators.EMAIL)
@@ -41,7 +42,7 @@ class MainPage(BasePage):
         return password_field
 
     def click_on_the_go_button(self):
-        return self.find_element(Locators.GO_BUTTON, time=100).click()
+        return self.find_element(Locators.GO_BUTTON).click()
 
     def login(self, email, password):
         self.enter_email(email)
@@ -49,4 +50,7 @@ class MainPage(BasePage):
         self.click_on_the_go_button()
 
     def click_on_the_add_money_button(self):
-        return self.find_element(Locators.ADD_MONEY_BUTTON, time=100).click()
+        return self.find_element(Locators.ADD_MONEY_BUTTON).click()
+
+    def click_on_the_buy_car_button(self):
+        return self.find_element(Locators.BUY_CAR_BUTTON).click()
