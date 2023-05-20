@@ -1,4 +1,5 @@
-import pytest
+import time
+import collections
 from selenium.webdriver.common.by import By
 from pages.main_page import MainPage
 
@@ -14,14 +15,20 @@ def test_get_all_users(browser, db_cursor):
     assert browser.title == 'PFLB Test-API'
     assert browser.current_url == 'http://77.50.236.203:4881/#/read/users'
 
-    browser.get_screenshot_as_file('result.png')  # TODO
+    time.sleep(2)
+    browser.get_screenshot_as_file('result.png')
 
-    db_cursor.execute("SELECT * FROM person LIMIT 1")
-    first_user_in_db = db_cursor.fetchone()  # (4, 25, 'Peter', Decimal('26061.00'), 'Form', True, 1)
+    db_cursor.execute("SELECT id, first_name, second_name, age, sex, money"
+                      " FROM person LIMIT 1")
+    first_user_in_db = db_cursor.fetchone()
+
+    first_user_in_db = [str(i) for i in first_user_in_db]
+    first_user_in_db = list(map(lambda x: x.replace('True', 'MALE'), first_user_in_db))
+
     first_user_in_web_str = browser.find_element(By.XPATH,
                                                  '//*[@id="root"]/div/section/div/table/tbody/tr[1]').text  # '4 Peter Form 25 MALE 26061'
+    first_user_in_web = first_user_in_web_str.split(' ')
 
-    # convert string to tuple
-    first_user_in_web_tuple = tuple(map(str, first_user_in_web_str.split(', ')))
-
-    assert first_user_in_db == first_user_in_web_tuple
+    assert collections.Counter(first_user_in_db) == collections.Counter(first_user_in_web)
+#     Counter({'4': 1, 'Peter': 1, 'Form': 1, '25': 1, 'MALE': 1, '26061': 1})
+#     Counter({'4': 1, 'Peter': 1, 'Form': 1, '25': 1, 'MALE': 1, '26061.00': 1})
