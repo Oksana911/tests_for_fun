@@ -1,7 +1,6 @@
 import pytest
+from peewee import PostgresqlDatabase
 from selenium.webdriver import Chrome
-import psycopg2
-from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from constants import *
 
 
@@ -15,15 +14,20 @@ def browser():
 
 
 @pytest.fixture(scope='session')
-def db_cursor():
+def db():
     # Подключение к базе данных
-    with psycopg2.connect(dbname=DB_NAME,
-                          user=DB_USER,
-                          password=DB_PASSWORD,
-                          host=DB_HOST,
-                          port=DB_PORT) as connection:
-        connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+    db = PostgresqlDatabase(DB_NAME,
+                            user=DB_USER,
+                            password=DB_PASSWORD,
+                            host=DB_HOST,
+                            port=DB_PORT)
+    return db
 
-        # Курсор для выполнения операций с базой данных
-        cursor = connection.cursor()
-        return cursor
+
+@pytest.fixture(scope='session')
+def db_cursor(db):
+    # Подключение к базе данных
+    connection = db
+    # Курсор для выполнения операций с базой данных
+    cursor = connection.cursor()
+    return cursor
