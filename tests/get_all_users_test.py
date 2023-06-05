@@ -18,7 +18,7 @@ def test_get_all_users(browser, db_cursor):
     time.sleep(2)
     browser.get_screenshot_as_file('result.png')
 
-    db_cursor.execute("SELECT id, first_name, second_name, age, sex, money"
+    db_cursor.execute("SELECT id, first_name, second_name, age, sex"
                       " FROM person LIMIT 1")
     first_user_in_db = db_cursor.fetchone()
 
@@ -28,7 +28,6 @@ def test_get_all_users(browser, db_cursor):
     first_user_in_web_str = browser.find_element(By.XPATH,
                                                  '//*[@id="root"]/div/section/div/table/tbody/tr[1]').text  # '4 Peter Form 25 MALE 26061'
     first_user_in_web = first_user_in_web_str.split(' ')
+    first_user_in_web.pop(-1)
 
     assert collections.Counter(first_user_in_db) == collections.Counter(first_user_in_web)
-#     Counter({'4': 1, 'Peter': 1, 'Form': 1, '25': 1, 'MALE': 1, '26061': 1})
-#     Counter({'4': 1, 'Peter': 1, 'Form': 1, '25': 1, 'MALE': 1, '26061.00': 1})

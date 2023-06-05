@@ -21,13 +21,12 @@ def db():
                             password=DB_PASSWORD,
                             host=DB_HOST,
                             port=DB_PORT)
-    return db
+    connection = db.connection()
+    return connection
 
 
 @pytest.fixture(scope='session')
 def db_cursor(db):
-    # Подключение к базе данных
-    connection = db
     # Курсор для выполнения операций с базой данных
-    cursor = connection.cursor()
+    cursor = db.cursor()
     return cursor
