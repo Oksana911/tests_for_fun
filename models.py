@@ -1,5 +1,16 @@
 from peewee import *
-from tests.conftest import db
+from constants import *
+
+
+db = PostgresqlDatabase(DB_NAME,
+                        user=DB_USER,
+                        password=DB_PASSWORD,
+                        host=DB_HOST,
+                        port=DB_PORT)
+
+
+class UnknownField(object):
+    def __init__(self, *_, **__): pass
 
 
 class BaseModel(Model):
@@ -7,39 +18,75 @@ class BaseModel(Model):
         database = db
 
 
-class House(BaseModel):
-    floor_count = AutoField(column_name='floor_count')
-    price = DecimalField(column_name='price')
+class Car(BaseModel):
+    engine_type_id = BigIntegerField()
+    id = BigIntegerField(unique=True)
+    mark = CharField()
+    model = CharField()
+    person_id = BigIntegerField(null=True)
+    price = DecimalField(null=True)
 
     class Meta:
-        table_name = 'House'
-
-
-class Person(BaseModel):
-    first_name = CharField(column_name='first_name')
-    second_name = CharField(column_name='second_name')
-    age = AutoField(column_name='age')
-    sex = BooleanField(column_name='sex')
-    money = DecimalField(column_name='money')
-    house_id = ForeignKeyField(House.id, related_name='houses')
-
-    class Meta:
-        table_name = 'Person'
+        table_name = 'car'
+        primary_key = False
 
 
 class EngineType(BaseModel):
-    type_name = CharField(column_name='type_name')
+    id = BigIntegerField(unique=True)
+    type_name = CharField()
 
     class Meta:
-        table_name = 'EngineType'
+        table_name = 'engine_type'
+        primary_key = False
 
 
-class Car(BaseModel):
-    mark = CharField(column_name='mark')
-    model = CharField(column_name='model')
-    price = DecimalField(column_name='price')
-    engine_type_id = ForeignKeyField(EngineType.id, related_name='engines')
-    person_id = ForeignKeyField(Person.id, related_name='persons')
+class House(BaseModel):
+    floor_count = IntegerField()
+    id = BigIntegerField(unique=True)
+    price = DecimalField(null=True)
 
     class Meta:
-        table_name = 'Car'
+        table_name = 'house'
+        primary_key = False
+
+
+class ParkingPlace(BaseModel):
+    house_id = BigIntegerField(null=True)
+    id = BigIntegerField(unique=True)
+    is_covered = BooleanField()
+    is_warm = BooleanField()
+    places_count = IntegerField()
+
+    class Meta:
+        table_name = 'parking_place'
+        primary_key = False
+
+
+class Person(BaseModel):
+    age = IntegerField()
+    first_name = CharField()
+    house_id = BigIntegerField(null=True)
+    id = BigIntegerField(unique=True)
+    money = DecimalField()
+    second_name = CharField()
+    sex = BooleanField()
+
+    class Meta:
+        table_name = 'person'
+        primary_key = False
+
+
+class PersonRelationship(BaseModel):
+    primary_person_id = BigIntegerField()
+    relationship_type = CharField(null=True)
+    secondary_person_id = BigIntegerField()
+
+    class Meta:
+        table_name = 'person_relationship'
+        indexes = (
+            (('secondary_person_id', 'primary_person_id'), True),
+        )
+        primary_key = False
+
+
+connection = db.connection()
