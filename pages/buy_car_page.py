@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 class Locators:
     USER_ID_BUTTON = (By.XPATH, '//*[@id="id_send"]')
     CAR_ID_BUTTON = (By.XPATH, '//*[@id="car_send"]')
+    BUY_RADIO = (By.XPATH, '//*[@id="settleOrEvict"]')
     PUSH_BUTTON = (By.XPATH, '//*[@id="root"]/div/section/div/div/button[1]')
 
 
@@ -22,6 +23,9 @@ class BuyCarPage(BasePage):
         car_id_field.click()
         car_id_field.send_keys(car_id)
         return car_id
+
+    def choose_buy(self):
+        return self.find_element(Locators.BUY_RADIO).click()
 
     def click_on_the_push_button(self):
         return self.find_element(Locators.PUSH_BUTTON).click()
