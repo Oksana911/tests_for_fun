@@ -43,6 +43,3 @@ class Car(BaseModel):
 
     class Meta:
         table_name = 'Car'
-
-
-
