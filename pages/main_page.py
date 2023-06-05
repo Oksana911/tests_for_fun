@@ -14,6 +14,7 @@ class Locators:
     CREATE_NEW_BUTTON = (By.XPATH, '//*[@id="basic-navbar-nav"]/div/div[1]/div/a[3]')
     ADD_MONEY_BUTTON = (By.XPATH, '//*[@id="basic-navbar-nav"]/div/div[1]/div/a[4]')
     BUY_CAR_BUTTON = (By.XPATH, '//*[@id="basic-navbar-nav"]/div/div[1]/div/a[5]')
+    SETTLE_TO_HOUSE_BUTTON = (By.XPATH, '//*[@id="basic-navbar-nav"]/div/div[1]/div/a[6]')
 
 
 class MainPage(BasePage):
@@ -54,3 +55,6 @@ class MainPage(BasePage):
 
     def click_on_the_buy_car_button(self):
         return self.find_element(Locators.BUY_CAR_BUTTON).click()
+
+    def click_on_the_settle_to_house_button(self):
+        return self.find_element(Locators.SETTLE_TO_HOUSE_BUTTON).click()
