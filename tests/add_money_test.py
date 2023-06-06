@@ -1,4 +1,6 @@
 import time
+from decimal import Decimal
+
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from constants import EMAIL, PASSWORD
@@ -31,7 +33,7 @@ def test_add_money(browser):
     time.sleep(3)
 
     # получаем id последнего созданного юзера в БД:
-    user_obj = Person.select().order_by(Person.id.desc()).limit(1)
+    user_obj = Person.select().where((Person.money < 100) & (Person.money > 0)).limit(1)
     user_id = [user.id for user in user_obj]
     user_id = int(''.join(map(str, user_id)))
 
@@ -41,8 +43,10 @@ def test_add_money(browser):
     page.enter_user_id(user_id)
     page.enter_money(100)
     page.click_on_the_push_button()
+    time.sleep(3)
 
     # для проверки наличия денег в БД:
     money_in_db = Person.get(Person.id == user_id).money
+    money_in_db = float(money_in_db)
     assert money_in_db > 100
     assert money_in_db == user_money + 100

@@ -52,13 +52,14 @@ def test_buy_car(browser):
 
     # покупаем авто:
     page = BuyCarPage(browser)
-    time.sleep(3)
+    time.sleep(1)
 
     page.enter_user_id(user_id)
     page.enter_car_id(car_id)
     page.choose_buy()
     time.sleep(3)
     page.click_on_the_push_button()
+    time.sleep(2)
 
     # проверяем добавился ли авто юзеру в БД:
     test_car = Car.get_by_id(car_id)
