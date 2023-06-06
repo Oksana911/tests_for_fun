@@ -2,12 +2,14 @@ import time
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from constants import *
+from models import Person
 from pages.create_page import CreatePage
 from pages.main_page import MainPage
 
 
-def test_create_user(browser, db_cursor):
+def test_create_user(browser):
     """Тест создания нового пользователя"""
+
     page = MainPage(browser)
     page.go_to_site()
     assert browser.title == 'PFLB Test-API'
@@ -26,10 +28,10 @@ def test_create_user(browser, db_cursor):
     page.click_on_the_create_button()
 
     page = CreatePage(browser)
-    time.sleep(3)
+    time.sleep(2)
     page.input(FIRST_NAME, LAST_NAME, AGE, MONEY)
     page.click_on_the_push_button()
-
+    time.sleep(2)
     browser.get_screenshot_as_file('res_create.png')
 
     assert browser.current_url == 'http://77.50.236.203:4881/#/create/user'
@@ -39,8 +41,8 @@ def test_create_user(browser, db_cursor):
     new_user_id = new_user_id_in_web.replace('New user ID: ', '')  # удаляем ненужные символы
 
     # получаем id последнего созданного юзера в БД:
-    db_cursor.execute("SELECT MAX(id) FROM person LIMIT 1")
-    user_in_db = db_cursor.fetchone()  # (111111,)
-    user_in_db = ''.join([str(value) for value in user_in_db])
+    user_obj = Person.select().order_by(Person.id.desc()).limit(1)
+    user_in_db = [user.id for user in user_obj]
+    user_in_db = int(''.join(map(str, user_in_db)))
 
     assert user_in_db == new_user_id

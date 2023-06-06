@@ -2,11 +2,12 @@ import time
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from constants import EMAIL, PASSWORD
+from models import Person
 from pages.add_money_page import AddMoneyPage
 from pages.main_page import MainPage
 
 
-def test_add_money(browser, db_cursor):
+def test_add_money(browser):
     """Тест добавления денег последнему созданному пользователю"""
 
     page = MainPage(browser)
@@ -30,21 +31,18 @@ def test_add_money(browser, db_cursor):
     time.sleep(3)
 
     # получаем id последнего созданного юзера в БД:
-    db_cursor.execute("SELECT MAX(id) FROM person LIMIT 1")
-    id_in_db = db_cursor.fetchone()  # (111111,)
-    id_in_db = int(''.join([str(value) for value in id_in_db]))
+    user_obj = Person.select().order_by(Person.id.desc()).limit(1)
+    user_id = [user.id for user in user_obj]
+    user_id = int(''.join(map(str, user_id)))
 
-    page.enter_user_id(id_in_db)
+    user_money = [user.money for user in user_obj]
+    user_money = float(''.join(map(str, user_money)))
+
+    page.enter_user_id(user_id)
     page.enter_money(100)
-
     page.click_on_the_push_button()
 
     # для проверки наличия денег в БД:
-    db_cursor.execute("SELECT money FROM person "
-                      "ORDER BY id DESC ")
-    money_in_db = db_cursor.fetchone() # (112.00,)
-    money_in_db = float(''.join([str(value) for value in money_in_db])) # приводим кортеж к float
-
+    money_in_db = Person.get(Person.id == user_id).money
     assert money_in_db > 100
-
-
+    assert money_in_db == user_money + 100
