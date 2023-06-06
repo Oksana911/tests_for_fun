@@ -1,4 +1,6 @@
 import time
+from decimal import Decimal
+
 from peewee import fn
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -45,6 +47,8 @@ def test_buy_house(browser):
     user_obj = Person.select().where((Person.money > house_price) & (Person.house_id.is_null())).limit(1)
     user_id = [user.id for user in user_obj]
     user_id = int(''.join(map(str, user_id)))
+    user_money = [user.money for user in user_obj]
+    user_money = float(''.join(map(str, user_money)))
 
     # заселяем юзера в дом:
     page = BuyHousePage(browser)
@@ -60,3 +64,9 @@ def test_buy_house(browser):
 
     test_user_house_id = Person.get(Person.id == user_id).house_id
     assert test_user_house_id == house_id
+
+    # вычитаем потраченную сумму из денег юзера в БД и проверяем
+    Person.update(Person.money - house_price).where(Person.id == user_id)
+    money_befor = Decimal(user_money)
+    money_after = Person.get(Person.id == user_id).money
+    assert money_befor == money_after + Decimal(house_price)

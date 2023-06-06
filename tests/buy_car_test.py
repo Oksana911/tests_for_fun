@@ -1,4 +1,5 @@
 import time
+from decimal import Decimal
 from peewee import fn
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -29,30 +30,43 @@ def test_buy_car(browser):
     page.click_on_the_users_button()
     page.click_on_the_buy_car_button()
 
-    # выбираем рандомное свободное (ничье)  авто из БД:
-    car_obj = Car.select().where(Car.person_id is None).order_by(fn.Random()).limit(1).dicts()
+    # выбираем рандомное свободное (ничье) авто из БД:
+    car_obj = Car.select().where(Car.person_id.is_null()).order_by(fn.Random()).limit(1)
 
     # получаем id и стоимость авто в инт:
-    for car in car_obj:
-        car_id = car['id']
-        car_price = car['price']
+    car_id = [car.id for car in car_obj]
+    car_id = int(''.join(map(str, car_id)))
 
-        # выбираем id пользователя из БД с достаточным количеством денег:
-        user = Person.select().where(Person.money > car_price).limit(1)
-        user_id = [user.id for user in user]
-        user_id = int(''.join(map(str, user_id)))
+    car_price = [car.price for car in car_obj]
+    if car_price == [None]:
+        car_price = 0
+    else:
+        car_price = float(''.join(map(str, car_price)))
 
-        # покупаем авто:
-        page = BuyCarPage(browser)
-        time.sleep(3)
+    # выбираем id пользователя из БД с достаточным количеством денег:
+    user_obj = Person.select().where(Person.money > car_price).limit(1)
+    user_id = [user.id for user in user_obj]
+    user_id = int(''.join(map(str, user_id)))
+    user_money = [user.money for user in user_obj]
+    user_money = float(''.join(map(str, user_money)))
 
-        page.enter_user_id(user_id)
-        page.enter_car_id(car_id)
-        page.choose_buy()
-        time.sleep(3)
-        page.click_on_the_push_button()
+    # покупаем авто:
+    page = BuyCarPage(browser)
+    time.sleep(3)
 
-        # проверяем добавился ли авто юзеру в БД:
-        test_car = Car.get_by_id(car_id)
+    page.enter_user_id(user_id)
+    page.enter_car_id(car_id)
+    page.choose_buy()
+    time.sleep(3)
+    page.click_on_the_push_button()
 
-        assert test_car.person_id is not None
+    # проверяем добавился ли авто юзеру в БД:
+    test_car = Car.get_by_id(car_id)
+
+    assert test_car.person_id is not None
+
+    # вычитаем потраченную на машину сумму из денег юзера в БД и проверяем
+    Person.update(Person.money - car_price).where(Person.id == user_id)
+    money_befor = Decimal(user_money)
+    money_after = Person.get(Person.id == user_id).money
+    assert money_befor == money_after + Decimal(car_price)
