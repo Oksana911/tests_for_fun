@@ -1,6 +1,6 @@
 import time
-from decimal import Decimal
 
+import allure
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from constants import EMAIL, PASSWORD
@@ -9,22 +9,27 @@ from pages.add_money_page import AddMoneyPage
 from pages.main_page import MainPage
 
 
+# severity('blocker', 'critical', 'normal', 'minor', 'trivial')
+
+@allure.feature('Open pages')
+@allure.story('Тест добавления денег')
+@allure.severity('normal')  #  важность метода
 def test_add_money(browser):
     """Тест добавления денег последнему созданному пользователю"""
+    with allure.step('Login'):
+        page = MainPage(browser)
+        page.go_to_site()
+        assert browser.title == 'PFLB Test-API'
 
-    page = MainPage(browser)
-    page.go_to_site()
-    assert browser.title == 'PFLB Test-API'
+        page.login(EMAIL, PASSWORD)
 
-    page.login(EMAIL, PASSWORD)
-
-    # подтверждаем всплывающее окно:
-    WebDriverWait(browser, 3).until(EC.alert_is_present(),
-                                    'Timed out waiting for PA creation ' +
-                                    'confirmation popup to appear.')
-    alert = browser.switch_to.alert
-    assert alert.text == 'Successful authorization'
-    alert.accept()
+        # подтверждаем всплывающее окно:
+        WebDriverWait(browser, 3).until(EC.alert_is_present(),
+                                        'Timed out waiting for PA creation ' +
+                                        'confirmation popup to appear.')
+        alert = browser.switch_to.alert
+        assert alert.text == 'Successful authorization'
+        alert.accept()
     ###
     page.click_on_the_users_button()
     page.click_on_the_add_money_button()
@@ -44,6 +49,8 @@ def test_add_money(browser):
     page.enter_money(100)
     page.click_on_the_push_button()
     time.sleep(3)
+    with allure.step('Get screenshot'):
+        browser.get_screenshot_as_file('result_add_money.png')
 
     # для проверки наличия денег в БД:
     money_in_db = Person.get(Person.id == user_id).money
