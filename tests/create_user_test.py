@@ -38,7 +38,7 @@ def test_create_user(browser):
 
     # получаем id созданного юзера из формы об успешном создании:
     new_user_id_in_web = page.find_new_id()  # -> 'New user ID: 153784'
-    new_user_id = new_user_id_in_web.replace('New user ID: ', '')  # удаляем ненужные символы
+    new_user_id = int(new_user_id_in_web.replace('New user ID: ', ''))  # удаляем ненужные символы
 
     # получаем id последнего созданного юзера в БД:
     user_obj = Person.select().order_by(Person.id.desc()).limit(1)

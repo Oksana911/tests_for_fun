@@ -63,11 +63,10 @@ def test_buy_car(browser):
 
     # проверяем добавился ли авто юзеру в БД:
     test_car = Car.get_by_id(car_id)
-
     assert test_car.person_id is not None
 
     # вычитаем потраченную на машину сумму из денег юзера в БД и проверяем
     Person.update(Person.money - car_price).where(Person.id == user_id)
-    money_befor = Decimal(user_money)
+    money_befor = Decimal(user_money).quantize(Decimal('0.00'))
     money_after = Person.get(Person.id == user_id).money
     assert money_befor == money_after + Decimal(car_price)

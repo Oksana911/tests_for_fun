@@ -67,6 +67,6 @@ def test_buy_house(browser):
 
     # вычитаем потраченную сумму из денег юзера в БД и проверяем
     Person.update(Person.money - house_price).where(Person.id == user_id)
-    money_befor = Decimal(user_money)
+    money_befor = Decimal(user_money).quantize(Decimal('1.00'))
     money_after = Person.get(Person.id == user_id).money
     assert money_befor == money_after + Decimal(house_price)
